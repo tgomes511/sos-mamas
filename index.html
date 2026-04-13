@@ -90,8 +90,12 @@
         .cards-container { padding: 0 20px; flex-grow: 1; display: flex; flex-direction: column; gap: 15px; }
         .card { border-radius: 15px; padding: 18px 15px; display: flex; align-items: center; cursor: pointer; box-shadow: 0 4px 8px rgba(0,0,0,0.1); border: 2px solid rgba(255, 255, 255, 0.5); transition: transform 0.1s; }
         .card:active { transform: scale(0.98); }
-        .card-icon { font-size: 40px; margin-right: 15px; }
-        .card-text { color: var(--text-color); font-weight: 700; font-size: 16px; line-height: 1.2; }
+        
+        /* AQUI FOI DUPLICADO O TAMANHO (de 45px para 90px e font-size de 40px para 80px) */
+        .card-icon { font-size: 80px; margin-right: 20px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .card-icon img { width: 90px; height: 90px; object-fit: contain; }
+        
+        .card-text { color: var(--text-color); font-weight: 700; font-size: 18px; line-height: 1.3; } /* Ligeiro aumento na fonte para acompanhar o ícone */
         .card.pink { background: var(--card-pink); }
         .card.green { background: var(--card-green); }
         .card.blue { background: var(--card-blue); }
@@ -153,7 +157,6 @@
         .status-requested-byme { color: #f57c00; } 
         .status-my-own { color: #1e88e5; }
         
-        /* O estilo para a fonte do contador em tempo real */
         .time-counter { font-weight: normal; font-size: 11px; font-style: italic; margin-left: 4px; opacity: 0.8;}
 
         .btn-small { padding: 8px 12px; border: none; border-radius: 8px; font-size: 13px; font-weight: bold; cursor: pointer; color: white; }
@@ -224,17 +227,17 @@
         
         <div class="cards-container">
             <div class="card pink" onclick="navigateTo('view-depressao')">
-                <div class="card-icon">🤦‍♀️</div>
+                <div class="card-icon"><img src="img/Depressao_pos-parto.png" alt="Depressão Pós-Parto" onerror="this.style.display='none'; this.parentNode.innerHTML='🤦‍♀️'"></div>
                 <div class="card-text">Informação sobre<br>Depressão Pós-Parto</div>
             </div>
             
             <div class="card green" onclick="navigateTo('view-troca')">
-                <div class="card-icon">🧸🍼</div>
-                <div class="card-text">Troca de Itens</div>
+                <div class="card-icon"><img src="img/Troca_de_itens.png" alt="Troca de Itens" onerror="this.style.display='none'; this.parentNode.innerHTML='🧸🍼'"></div>
+                <div class="card-text">Troca de items</div>
             </div>
             
             <div class="card blue" onclick="navigateTo('view-profissionais')">
-                <div class="card-icon">👨‍⚕️</div>
+                <div class="card-icon"><img src="img/Profissional_saude.png" alt="Profissional de Saúde" onerror="this.style.display='none'; this.parentNode.innerHTML='👨‍⚕️'"></div>
                 <div class="card-text">Conversa com um<br>Profissional de Saúde</div>
             </div>
         </div>
@@ -286,7 +289,7 @@
     <div id="view-troca" class="view">
         <div class="sub-header">
             <button class="btn-back" onclick="navigateTo('view-home')">❮</button>
-            <div class="sub-title">Troca de Itens</div>
+            <div class="sub-title">Troca de Items</div>
         </div>
         <div id="items-container" class="item-list">
             </div>
@@ -306,9 +309,9 @@
                 <div class="card-icon">🧠</div>
                 <div class="card-text">Psicologia</div>
             </div>
-            <div class="card" style="background: white;" onclick="openChat('Saúde Materna', 'Saúde Materna')">
+            <div class="card" style="background: white;" onclick="openChat('Saúde Materna', 'Enfermagem Materna')">
                 <div class="card-icon">🤰</div>
-                <div class="card-text">Saúde Materna</div>
+                <div class="card-text">Enfermagem Materna</div>
             </div>
             <div class="card" style="background: white;" onclick="openChat('Assistente Social', 'Assistente Social')">
                 <div class="card-icon">🤝</div>
@@ -395,7 +398,6 @@
 
     const placeholderSVG = 'data:image/svg+xml;charset=UTF-8,%3Csvg xmlns="http://www.w3.org/2000/svg" width="600" height="400" viewBox="0 0 600 400"%3E%3Crect width="100%25" height="100%25" fill="%23e0e0e0"/%3E%3Ctext x="50%25" y="50%25" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="20" fill="%23888"%3ESem Imagem%3C/text%3E%3C/svg%3E';
 
-    // Base de dados com o novo campo "requestTime" inicializado a null
     let itemsDB = [
         { id: 1, name: 'Espreguiçadeira Musical', desc: 'Espreguiçadeira com várias músicas e vibração. Inclui as pilhas. Usado apenas 2 meses.', owner: 'Maria S***', available: true, requestedByMe: false, myOwnItem: false, img: 'img/espreguicadeira.jpg', requestTime: null },
         { id: 2, name: 'Berço Next2Me Chicco', desc: 'Berço co-sleeping ajustável em altura. Inclui colchão lavado e dois lençóis.', owner: 'Ana P***', available: true, requestedByMe: false, myOwnItem: false, img: 'img/next2me.jpg', requestTime: null },
@@ -442,7 +444,6 @@
         return `há ${diffDays} d`;
     }
 
-    // Loop a cada segundo para atualizar o texto do tempo sem precisar recarregar a lista inteira
     setInterval(() => {
         document.querySelectorAll('.time-counter').forEach(el => {
             const timeStr = el.getAttribute('data-time');
@@ -492,7 +493,6 @@
         document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
         document.getElementById(viewId).classList.add('active');
 
-        // Controlo de visibilidade do Botão Flutuante (FAB)
         const fab = document.getElementById('fab-add-btn');
         if(viewId === 'view-troca') {
             renderItemsList('items-container', itemsDB);
@@ -522,7 +522,6 @@
                 statusText = 'Disponível';
             } else if (item.requestedByMe) {
                 statusClass = 'status-requested-byme';
-                // Injeta a span mágica que o setInterval vai atualizar
                 let timeHTML = item.requestTime ? `<span class="time-counter" data-time="${item.requestTime}">(${getTimeAgo(item.requestTime)})</span>` : '';
                 statusText = `Requisitado por Mim ${timeHTML}`;
             } else {
@@ -624,7 +623,7 @@
         if(index !== -1) {
             itemsDB[index].available = false;
             itemsDB[index].requestedByMe = true;
-            itemsDB[index].requestTime = Date.now(); // Guarda a hora exacta!
+            itemsDB[index].requestTime = Date.now(); 
             updateUIAfterAction(id);
             alert('Artigo requisitado com sucesso!');
         }
@@ -636,7 +635,7 @@
             if(confirm("Tens a certeza que queres devolver este artigo?")) {
                 itemsDB[index].available = true;
                 itemsDB[index].requestedByMe = false;
-                itemsDB[index].requestTime = null; // Limpa o tempo!
+                itemsDB[index].requestTime = null; 
                 updateUIAfterAction(id);
                 alert('Artigo devolvido e novamente disponível!');
             }
