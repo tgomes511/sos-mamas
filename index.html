@@ -104,6 +104,28 @@
         .btn-back { font-size: 24px; background: none; border: none; color: var(--primary-blue); cursor: pointer; margin-right: 15px; }
         .sub-title { font-weight: 700; color: var(--text-color); font-size: 18px; }
 
+        /* Botão Flutuante (FAB) Fixo na App */
+        .fab-add { 
+            position: absolute; 
+            bottom: calc(20px + env(safe-area-inset-bottom)); 
+            right: 20px; 
+            width: 60px; 
+            height: 60px; 
+            background-color: var(--primary-blue); 
+            color: white; 
+            border-radius: 50%; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            font-size: 30px; 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3); 
+            cursor: pointer; 
+            z-index: 40; 
+            border: none; 
+            transition: transform 0.2s; 
+        }
+        .fab-add:active { transform: scale(0.95); }
+
         /* Conteúdo Depressão Pós Parto */
         .content-area { padding: 20px; color: #444; line-height: 1.6; }
         .content-area h3 { margin-bottom: 15px; margin-top: 25px; color: var(--primary-blue); font-size: 20px; border-bottom: 2px solid #e0e0e0; padding-bottom: 5px;}
@@ -118,8 +140,7 @@
         .item-list { padding: 10px 20px; display: flex; flex-direction: column; gap: 15px; }
         .item-row { display: flex; background: rgba(255, 255, 255, 0.8); border-radius: 12px; padding: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); cursor: pointer; align-items: center; }
         
-        /* Ajuste do Thumbnail local */
-        .item-img-thumb { width: 80px; height: 80px; border-radius: 8px; object-fit: cover; margin-right: 15px; background: #e0e0e0; box-shadow: 0 2px 4px rgba(0,0,0,0.1); border: 1px solid #eee; display: flex; align-items: center; justify-content: center; font-size: 10px; color: #888; text-align: center;}
+        .item-img-thumb { width: 80px; height: 80px; border-radius: 8px; object-fit: cover; margin-right: 15px; background: #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.1); border: 1px solid #eee; display: flex; align-items: center; justify-content: center; font-size: 10px; color: #888; text-align: center;}
         
         .item-info { flex-grow: 1; overflow: hidden; }
         .item-title { font-weight: 700; color: #333; font-size: 15px; margin-bottom: 2px;}
@@ -130,15 +151,21 @@
         .status-available { color: #2e7d32; }
         .status-unavailable { color: #c62828; }
         .status-requested-byme { color: #f57c00; } 
+        .status-my-own { color: #1e88e5; }
+        
+        /* O estilo para a fonte do contador em tempo real */
+        .time-counter { font-weight: normal; font-size: 11px; font-style: italic; margin-left: 4px; opacity: 0.8;}
+
+        .btn-small { padding: 8px 12px; border: none; border-radius: 8px; font-size: 13px; font-weight: bold; cursor: pointer; color: white; }
+        .btn-edit { background-color: #f57c00; }
+        .btn-delete { background-color: #c62828; }
 
         /* Overlays */
         .overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255, 255, 255, 0.97); backdrop-filter: blur(8px); z-index: 50; display: none; flex-direction: column; padding: 20px; padding-bottom: calc(20px + env(safe-area-inset-bottom)); overflow-y: auto; }
         .overlay.active { display: flex; }
         .overlay-close { align-self: flex-end; background: none; border: none; font-size: 30px; color: #333; cursor: pointer; margin-bottom: 10px; }
         
-        /* Ajuste Imagem grande local */
         .overlay-img { width: 100%; height: auto; max-height: 300px; object-fit: cover; border-radius: 12px; margin-bottom: 20px; background:#e0e0e0; box-shadow: 0 5px 15px rgba(0,0,0,0.1); display: flex; align-items: center; justify-content: center; color: #888;}
-        
         .overlay-title { font-size: 22px; font-weight: 700; margin-bottom: 10px; color: #333; }
         .overlay-desc { font-size: 15px; color: #555; line-height: 1.5; margin-bottom: 15px; }
         .overlay-meta { font-size: 14px; background: #f5f5f5; padding: 15px; border-radius: 8px; margin-bottom: 20px; }
@@ -177,11 +204,11 @@
             <p>Para personalizar a tua experiência no SOS Mamãs, diz-nos o teu nome.</p>
             <div class="input-group">
                 <label for="input-nome">Nome</label>
-                <input type="text" id="input-nome" placeholder="Ex: Zé" required>
+                <input type="text" id="input-nome" placeholder="Ex: Maria" required>
             </div>
             <div class="input-group">
                 <label for="input-apelido">Apelido</label>
-                <input type="text" id="input-apelido" placeholder="Ex: Tobias" required>
+                <input type="text" id="input-apelido" placeholder="Ex: Silva" required>
             </div>
             <button class="btn-start" onclick="saveUserOnboarding()">Entrar</button>
         </div>
@@ -305,6 +332,8 @@
         </div>
     </div>
 
+    <button id="fab-add-btn" class="fab-add" style="display: none;" onclick="openItemForm()">+</button>
+
     <div id="overlay-settings" class="overlay">
         <button class="overlay-close" onclick="closeSettings()">×</button>
         <h2 class="sub-title" style="margin-bottom: 25px; font-size: 24px;">Definições</h2>
@@ -319,12 +348,15 @@
         </div>
         <button class="btn-start" onclick="saveSettingsForm()">Guardar Alterações</button>
 
+        <h3 class="sub-title" style="margin-top: 40px; margin-bottom: 15px; border-bottom: 2px solid #ddd; padding-bottom: 5px;">Os meus Artigos para Troca</h3>
+        <div id="my-added-items-list" class="item-list" style="padding: 0;"></div>
+
         <h3 class="sub-title" style="margin-top: 40px; margin-bottom: 15px; border-bottom: 2px solid #ddd; padding-bottom: 5px;">Os meus Artigos Requisitados</h3>
         <div id="my-requests-list" class="item-list" style="padding: 0;"></div>
     </div>
 
     <div id="overlay-item" class="overlay">
-        <button class="overlay-close" onclick="closeOverlay()">×</button>
+        <button class="overlay-close" onclick="closeOverlay('overlay-item')">×</button>
         <img id="overlay-img" class="overlay-img" src="" alt="Imagem do Artigo" onerror="this.onerror=null; this.src='data:image/svg+xml;charset=UTF-8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22600%22 height=%22400%22 viewBox=%220 0 600 400%22%3E%3Crect width=%22100%25%22 height=%22100%25%22 fill=%22%23e0e0e0%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22 font-family=%22sans-serif%22 font-size=%2220%22 fill=%22%23888%22%3EImagem em falta na pasta img/%3C/text%3E%3C/svg%3E';">
         <h2 id="overlay-title" class="overlay-title"></h2>
         <p id="overlay-desc" class="overlay-desc"></p>
@@ -335,24 +367,46 @@
         <button id="btn-action" class="btn-action"></button>
     </div>
 
+    <div id="overlay-item-form" class="overlay">
+        <button class="overlay-close" onclick="closeOverlay('overlay-item-form')">×</button>
+        <h2 id="form-item-title" class="sub-title" style="margin-bottom: 25px; font-size: 24px;">Adicionar Artigo</h2>
+        
+        <input type="hidden" id="form-item-id">
+        <div class="input-group">
+            <label for="form-item-name">Nome do Artigo *</label>
+            <input type="text" id="form-item-name" placeholder="Ex: Carrinho de Passeio" required>
+        </div>
+        <div class="input-group">
+            <label for="form-item-desc">Descrição Breve *</label>
+            <input type="text" id="form-item-desc" placeholder="Ex: Usado apenas 3 meses..." required>
+        </div>
+        <div class="input-group">
+            <label for="form-item-img">Caminho da Imagem (Opcional)</label>
+            <input type="text" id="form-item-img" placeholder="Ex: img/meu-carrinho.jpg">
+        </div>
+        <button class="btn-start" onclick="saveItemForm()">Guardar Artigo</button>
+    </div>
+
 </div>
 
 <script>
     let currentChatContext = '';
     let currentUserInitials = '';
 
-    // A base de dados agora aponta para a pasta local 'img/'
+    const placeholderSVG = 'data:image/svg+xml;charset=UTF-8,%3Csvg xmlns="http://www.w3.org/2000/svg" width="600" height="400" viewBox="0 0 600 400"%3E%3Crect width="100%25" height="100%25" fill="%23e0e0e0"/%3E%3Ctext x="50%25" y="50%25" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="20" fill="%23888"%3ESem Imagem%3C/text%3E%3C/svg%3E';
+
+    // Base de dados com o novo campo "requestTime" inicializado a null
     let itemsDB = [
-        { id: 1, name: 'Espreguiçadeira Musical', desc: 'Espreguiçadeira com várias músicas e vibração. Inclui as pilhas. Usado apenas 2 meses.', owner: 'Maria S***', available: true, requestedByMe: false, img: 'img/espreguicadeira.jpg' },
-        { id: 2, name: 'Berço Next2Me Chicco', desc: 'Berço co-sleeping ajustável em altura. Inclui colchão lavado e dois lençóis.', owner: 'Ana P***', available: true, requestedByMe: false, img: 'img/next2me.jpg' },
-        { id: 3, name: 'Bomba Tira Leite', desc: 'Bomba elétrica dupla, higienizada e esterilizada. Acompanha frascos extra.', owner: 'Joana R***', available: false, requestedByMe: false, img: 'img/bomba.jpg' },
-        { id: 4, name: 'Trocador Portátil', desc: 'Trocador acolchoado com bolsos integrados para fraldas e toalhitas.', owner: 'Sofia M***', available: true, requestedByMe: false, img: 'img/trocador.jpg' },
-        { id: 5, name: 'Ninho Redutor para Bebé', desc: 'Ninho 100% algodão orgânico, capa removível e lavável na máquina.', owner: 'Catarina F***', available: true, requestedByMe: false, img: 'img/ninho.jpg' },
-        { id: 6, name: 'Carrinho de Bebé Trio', desc: 'Carrinho completo com alcofa, ovo e cadeira de passeio. Tecidos perfeitos.', owner: 'Beatriz L***', available: true, requestedByMe: false, img: 'img/carrinho.jpg' },
-        { id: 7, name: 'Banheira com Suporte', desc: 'Banheira ergonómica com suporte dobrável e tubo de escoamento.', owner: 'Inês C***', available: true, requestedByMe: false, img: 'img/banheira.jpg' },
-        { id: 8, name: 'Marsúpio Ergobaby', desc: 'Marsúpio ergonómico que suporta várias posições. Cor cinza escuro.', owner: 'Marta V***', available: true, requestedByMe: false, img: 'img/marsupio.jpg' },
-        { id: 9, name: 'Esterilizador de Biberões', desc: 'Esterilizador a vapor para o microondas. Demora apenas 3 minutos.', owner: 'Rita G***', available: false, requestedByMe: false, img: 'img/esterilizador.jpg' },
-        { id: 10, name: 'Ginásio de Atividades', desc: 'Tapete acolchoado de atividades com arcos, espelho e 4 brinquedos.', owner: 'Helena D***', available: true, requestedByMe: false, img: 'img/ginasio.jpg' }
+        { id: 1, name: 'Espreguiçadeira Musical', desc: 'Espreguiçadeira com várias músicas e vibração. Inclui as pilhas. Usado apenas 2 meses.', owner: 'Maria S***', available: true, requestedByMe: false, myOwnItem: false, img: 'img/espreguicadeira.jpg', requestTime: null },
+        { id: 2, name: 'Berço Next2Me Chicco', desc: 'Berço co-sleeping ajustável em altura. Inclui colchão lavado e dois lençóis.', owner: 'Ana P***', available: true, requestedByMe: false, myOwnItem: false, img: 'img/next2me.jpg', requestTime: null },
+        { id: 3, name: 'Bomba Tira Leite', desc: 'Bomba elétrica dupla, higienizada e esterilizada. Acompanha frascos extra.', owner: 'Joana R***', available: false, requestedByMe: false, myOwnItem: false, img: 'img/bomba.jpg', requestTime: null },
+        { id: 4, name: 'Trocador Portátil', desc: 'Trocador acolchoado com bolsos integrados para fraldas e toalhitas.', owner: 'Sofia M***', available: true, requestedByMe: false, myOwnItem: false, img: 'img/trocador.jpg', requestTime: null },
+        { id: 5, name: 'Ninho Redutor para Bebé', desc: 'Ninho 100% algodão orgânico, capa removível e lavável na máquina.', owner: 'Catarina F***', available: true, requestedByMe: false, myOwnItem: false, img: 'img/ninho.jpg', requestTime: null },
+        { id: 6, name: 'Carrinho de Bebé Trio', desc: 'Carrinho completo com alcofa, ovo e cadeira de passeio. Tecidos perfeitos.', owner: 'Beatriz L***', available: true, requestedByMe: false, myOwnItem: false, img: 'img/carrinho.jpg', requestTime: null },
+        { id: 7, name: 'Banheira com Suporte', desc: 'Banheira ergonómica com suporte dobrável e tubo de escoamento.', owner: 'Inês C***', available: true, requestedByMe: false, myOwnItem: false, img: 'img/banheira.jpg', requestTime: null },
+        { id: 8, name: 'Marsúpio Ergobaby', desc: 'Marsúpio ergonómico que suporta várias posições. Cor cinza escuro.', owner: 'Marta V***', available: true, requestedByMe: false, myOwnItem: false, img: 'img/marsupio.jpg', requestTime: null },
+        { id: 9, name: 'Esterilizador de Biberões', desc: 'Esterilizador a vapor para o microondas. Demora apenas 3 minutos.', owner: 'Rita G***', available: false, requestedByMe: false, myOwnItem: false, img: 'img/esterilizador.jpg', requestTime: null },
+        { id: 10, name: 'Ginásio de Atividades', desc: 'Tapete acolchoado de atividades com arcos, espelho e 4 brinquedos.', owner: 'Helena D***', available: true, requestedByMe: false, myOwnItem: false, img: 'img/ginasio.jpg', requestTime: null }
     ];
 
     const respostasProfissionais = [
@@ -370,6 +424,35 @@
         "Que desafio! Mas olha, tudo passa, prometo. Tens conseguido tirar algum tempo só para ti nestes dias?",
         "Revejo-me tanto nas tuas palavras! Um dia de cada vez, mãe. Estamos juntas nesta aventura louca."
     ];
+
+    // --- TEMPORIZADOR PARA O CONTADOR AO VIVO ---
+    function getTimeAgo(timestamp) {
+        if (!timestamp) return '';
+        const diffMs = Date.now() - timestamp;
+        const diffSecs = Math.floor(diffMs / 1000);
+        if (diffSecs < 60) return `há ${diffSecs} seg`;
+        
+        const diffMins = Math.floor(diffSecs / 60);
+        if (diffMins < 60) return `há ${diffMins} min`;
+        
+        const diffHours = Math.floor(diffMins / 60);
+        if (diffHours < 24) return `há ${diffHours} h`;
+        
+        const diffDays = Math.floor(diffHours / 24);
+        return `há ${diffDays} d`;
+    }
+
+    // Loop a cada segundo para atualizar o texto do tempo sem precisar recarregar a lista inteira
+    setInterval(() => {
+        document.querySelectorAll('.time-counter').forEach(el => {
+            const timeStr = el.getAttribute('data-time');
+            if (timeStr) {
+                const time = parseInt(timeStr);
+                const text = getTimeAgo(time);
+                el.innerText = text ? `(${text})` : '';
+            }
+        });
+    }, 1000);
 
     // --- INICIALIZAÇÃO E ONBOARDING ---
     function initApp() {
@@ -409,8 +492,13 @@
         document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
         document.getElementById(viewId).classList.add('active');
 
+        // Controlo de visibilidade do Botão Flutuante (FAB)
+        const fab = document.getElementById('fab-add-btn');
         if(viewId === 'view-troca') {
             renderItemsList('items-container', itemsDB);
+            fab.style.display = 'flex';
+        } else {
+            fab.style.display = 'none';
         }
     }
 
@@ -419,19 +507,24 @@
         container.innerHTML = ''; 
 
         if (dataArray.length === 0 && isSettingsView) {
-            container.innerHTML = '<p class="empty-state">Ainda não requisitaste nenhum artigo.</p>';
+            container.innerHTML = '<p class="empty-state">Ainda não tens artigos nesta lista.</p>';
             return;
         }
 
         dataArray.forEach(item => {
             let statusClass, statusText;
 
-            if (item.available) {
+            if (item.myOwnItem && containerId === 'items-container') {
+                statusClass = 'status-my-own';
+                statusText = 'Adicionado por Ti';
+            } else if (item.available) {
                 statusClass = 'status-available';
                 statusText = 'Disponível';
             } else if (item.requestedByMe) {
                 statusClass = 'status-requested-byme';
-                statusText = 'Requisitado por Mim';
+                // Injeta a span mágica que o setInterval vai atualizar
+                let timeHTML = item.requestTime ? `<span class="time-counter" data-time="${item.requestTime}">(${getTimeAgo(item.requestTime)})</span>` : '';
+                statusText = `Requisitado por Mim ${timeHTML}`;
             } else {
                 statusClass = 'status-unavailable';
                 statusText = 'Requisitado';
@@ -439,17 +532,32 @@
 
             const row = document.createElement('div');
             row.className = 'item-row';
-            row.onclick = () => openItemDetails(item.id);
-
-            row.innerHTML = `
-                <img src="${item.img}" class="item-img-thumb" alt="${item.name}" onerror="this.onerror=null; this.src='data:image/svg+xml;charset=UTF-8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2280%22 height=%2280%22 viewBox=%220 0 80 80%22%3E%3Crect width=%22100%25%22 height=%22100%25%22 fill=%22%23e0e0e0%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22 font-family=%22sans-serif%22 font-size=%2210%22 fill=%22%23888%22%3ESem Img%3C/text%3E%3C/svg%3E';">
-                <div class="item-info">
-                    <div class="item-title">${item.name}</div>
-                    <div class="item-desc">${item.desc}</div>
-                    <div class="item-owner">De: ${item.owner}</div>
-                    <div class="item-status ${statusClass}">${statusText}</div>
-                </div>
-            `;
+            
+            if (containerId === 'my-added-items-list') {
+                row.innerHTML = `
+                    <img src="${item.img}" class="item-img-thumb" alt="${item.name}" onerror="this.onerror=null; this.src='${placeholderSVG}';">
+                    <div class="item-info">
+                        <div class="item-title">${item.name}</div>
+                        <div class="item-desc">${item.desc}</div>
+                        <div class="item-status ${statusClass}">${statusText}</div>
+                        <div style="margin-top: 8px; display: flex; gap: 10px;">
+                            <button class="btn-small btn-edit" onclick="openItemForm(${item.id})">Editar</button>
+                            <button class="btn-small btn-delete" onclick="deleteMyItem(${item.id})">Apagar</button>
+                        </div>
+                    </div>
+                `;
+            } else {
+                row.onclick = () => openItemDetails(item.id);
+                row.innerHTML = `
+                    <img src="${item.img}" class="item-img-thumb" alt="${item.name}" onerror="this.onerror=null; this.src='${placeholderSVG}';">
+                    <div class="item-info">
+                        <div class="item-title">${item.name}</div>
+                        <div class="item-desc">${item.desc}</div>
+                        <div class="item-owner">De: ${item.owner}</div>
+                        <div class="item-status ${statusClass}">${statusText}</div>
+                    </div>
+                `;
+            }
             container.appendChild(row);
         });
     }
@@ -460,10 +568,9 @@
         if(!item) return;
         
         const imgEl = document.getElementById('overlay-img');
-        // Fallback dinâmico caso a imagem não exista na pasta img/
         imgEl.onerror = function() {
             this.onerror = null;
-            this.src = 'data:image/svg+xml;charset=UTF-8,%3Csvg xmlns="http://www.w3.org/2000/svg" width="600" height="400" viewBox="0 0 600 400"%3E%3Crect width="100%25" height="100%25" fill="%23e0e0e0"/%3E%3Ctext x="50%25" y="50%25" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="20" fill="%23888"%3EImagem em falta na pasta img/%3C/text%3E%3C/svg%3E';
+            this.src = placeholderSVG;
         };
         imgEl.src = item.img;
         
@@ -476,7 +583,13 @@
 
         btn.onclick = null;
 
-        if (item.available) {
+        if (item.myOwnItem) {
+            statusEl.innerText = 'Adicionado por Ti';
+            statusEl.style.color = '#1e88e5';
+            btn.disabled = true;
+            btn.innerText = 'O Teu Artigo';
+            btn.style.background = '#ccc';
+        } else if (item.available) {
             statusEl.innerText = 'Disponível';
             statusEl.style.color = '#2e7d32';
             btn.disabled = false;
@@ -484,7 +597,8 @@
             btn.style.background = 'var(--primary-blue)';
             btn.onclick = () => requestItem(id);
         } else if (item.requestedByMe) {
-            statusEl.innerText = 'Requisitado por Mim';
+            let timeHTML = item.requestTime ? `<span class="time-counter" data-time="${item.requestTime}">(${getTimeAgo(item.requestTime)})</span>` : '';
+            statusEl.innerHTML = `Requisitado por Mim ${timeHTML}`;
             statusEl.style.color = '#f57c00';
             btn.disabled = false;
             btn.innerText = 'Devolver Artigo';
@@ -501,8 +615,8 @@
         document.getElementById('overlay-item').classList.add('active');
     }
 
-    function closeOverlay() {
-        document.getElementById('overlay-item').classList.remove('active');
+    function closeOverlay(id) {
+        document.getElementById(id).classList.remove('active');
     }
 
     function requestItem(id) {
@@ -510,6 +624,7 @@
         if(index !== -1) {
             itemsDB[index].available = false;
             itemsDB[index].requestedByMe = true;
+            itemsDB[index].requestTime = Date.now(); // Guarda a hora exacta!
             updateUIAfterAction(id);
             alert('Artigo requisitado com sucesso!');
         }
@@ -521,30 +636,116 @@
             if(confirm("Tens a certeza que queres devolver este artigo?")) {
                 itemsDB[index].available = true;
                 itemsDB[index].requestedByMe = false;
+                itemsDB[index].requestTime = null; // Limpa o tempo!
                 updateUIAfterAction(id);
                 alert('Artigo devolvido e novamente disponível!');
             }
         }
     }
 
-    function updateUIAfterAction(id) {
-        openItemDetails(id); 
+    function updateUIAfterAction(id = null) {
+        if (id !== null && document.getElementById('overlay-item').classList.contains('active')) {
+            openItemDetails(id); 
+        }
         if (document.getElementById('view-troca').classList.contains('active')) {
             renderItemsList('items-container', itemsDB);
         }
         if (document.getElementById('overlay-settings').classList.contains('active')) {
-            const myItems = itemsDB.filter(i => i.requestedByMe === true);
-            renderItemsList('my-requests-list', myItems, true);
+            refreshSettingsLists();
+        }
+    }
+
+    // --- LÓGICA DE CRIAÇÃO / EDIÇÃO DE ITENS (O MEU ARTIGO) ---
+    function openItemForm(id = null) {
+        const titleEl = document.getElementById('form-item-title');
+        const idInput = document.getElementById('form-item-id');
+        const nameInput = document.getElementById('form-item-name');
+        const descInput = document.getElementById('form-item-desc');
+        const imgInput = document.getElementById('form-item-img');
+
+        if (id) {
+            const item = itemsDB.find(i => i.id === id);
+            titleEl.innerText = "Editar Artigo";
+            idInput.value = item.id;
+            nameInput.value = item.name;
+            descInput.value = item.desc;
+            imgInput.value = item.img === placeholderSVG ? '' : item.img;
+        } else {
+            titleEl.innerText = "Adicionar Artigo";
+            idInput.value = "";
+            nameInput.value = "";
+            descInput.value = "";
+            imgInput.value = "";
+        }
+
+        document.getElementById('overlay-item-form').classList.add('active');
+    }
+
+    function saveItemForm() {
+        const idVal = document.getElementById('form-item-id').value;
+        const nameVal = document.getElementById('form-item-name').value.trim();
+        const descVal = document.getElementById('form-item-desc').value.trim();
+        const imgVal = document.getElementById('form-item-img').value.trim();
+
+        if (nameVal === '' || descVal === '') {
+            alert('Por favor preenche o Nome e a Descrição.');
+            return;
+        }
+
+        const nome = localStorage.getItem('userNome') || 'Anónimo';
+        const apelido = localStorage.getItem('userApelido') || '';
+        const ownerName = apelido ? `${nome} ${apelido.charAt(0)}***` : `${nome}***`;
+        const finalImg = imgVal === '' ? placeholderSVG : imgVal;
+
+        if (idVal) {
+            const index = itemsDB.findIndex(i => i.id === parseInt(idVal));
+            if (index !== -1) {
+                itemsDB[index].name = nameVal;
+                itemsDB[index].desc = descVal;
+                itemsDB[index].img = finalImg;
+            }
+            alert('Artigo editado com sucesso!');
+        } else {
+            const newItem = {
+                id: Date.now(),
+                name: nameVal,
+                desc: descVal,
+                owner: ownerName,
+                available: true,
+                requestedByMe: false,
+                myOwnItem: true,
+                img: finalImg,
+                requestTime: null
+            };
+            itemsDB.unshift(newItem); 
+            alert('Artigo adicionado com sucesso!');
+        }
+
+        closeOverlay('overlay-item-form');
+        updateUIAfterAction();
+    }
+
+    function deleteMyItem(id) {
+        if(confirm("Tens a certeza absoluta que queres apagar este artigo? Esta ação não pode ser revertida.")) {
+            itemsDB = itemsDB.filter(i => i.id !== id);
+            updateUIAfterAction();
         }
     }
 
     // --- LÓGICA DE DEFINIÇÕES (ROLDANA) ---
+    function refreshSettingsLists() {
+        const myRequests = itemsDB.filter(i => i.requestedByMe === true);
+        renderItemsList('my-requests-list', myRequests, true);
+
+        const myAddedItems = itemsDB.filter(i => i.myOwnItem === true);
+        renderItemsList('my-added-items-list', myAddedItems, true);
+    }
+
     function openSettings() {
         document.getElementById('settings-nome').value = localStorage.getItem('userNome') || '';
         document.getElementById('settings-apelido').value = localStorage.getItem('userApelido') || '';
         
-        const myItems = itemsDB.filter(i => i.requestedByMe === true);
-        renderItemsList('my-requests-list', myItems, true);
+        refreshSettingsLists();
 
         document.getElementById('overlay-settings').classList.add('active');
     }
