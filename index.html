@@ -2,7 +2,7 @@
 <html lang="pt-PT">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>SOS Mamãs</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Pacifico&family=Nunito:wght@400;600;700&display=swap');
@@ -22,20 +22,25 @@
             margin: 0;
             padding: 0;
             font-family: 'Nunito', sans-serif;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
             background-color: #e0e0e0;
             display: flex;
             justify-content: center;
+            align-items: center; 
             height: 100vh;
+            height: 100dvh; 
+            margin: 0;
             overflow: hidden;
         }
 
         .app-container {
             width: 100%;
-            max-width: 414px;
+            max-width: 414px; 
             height: 100%;
+            max-height: 100dvh;
             background: var(--bg-gradient);
             position: relative;
             box-shadow: 0 0 20px rgba(0,0,0,0.2);
@@ -47,120 +52,39 @@
         .view {
             display: none;
             flex-direction: column;
-            height: 100%;
-            width: 100%;
-            overflow-y: auto;
             position: absolute;
             top: 0;
             left: 0;
+            width: 100%;
+            height: 100%;
             background: var(--bg-gradient);
             z-index: 10;
+            overflow-y: auto;
+            padding-bottom: calc(30px + env(safe-area-inset-bottom)); 
         }
 
-        .view.active {
-            display: flex;
-        }
+        .view.active { display: flex; }
 
         /* ONBOARDING */
-        #view-onboarding {
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-            z-index: 100;
-        }
+        #view-onboarding { justify-content: center; align-items: center; padding: 20px; z-index: 100; }
+        .onboarding-card { background: rgba(255, 255, 255, 0.9); padding: 30px 20px; border-radius: 20px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); width: 100%; text-align: center; backdrop-filter: blur(10px); }
+        .onboarding-card h2 { font-family: 'Pacifico', cursive; color: var(--primary-blue); font-size: 32px; margin-bottom: 10px; }
+        .onboarding-card p { color: var(--text-color); margin-bottom: 20px; font-size: 16px; }
 
-        .onboarding-card {
-            background: rgba(255, 255, 255, 0.9);
-            padding: 30px 20px;
-            border-radius: 20px;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-            width: 100%;
-            text-align: center;
-            backdrop-filter: blur(10px);
-        }
+        .input-group { margin-bottom: 15px; text-align: left; }
+        .input-group label { display: block; margin-bottom: 5px; color: var(--text-color); font-weight: 600; font-size: 14px; }
+        .input-group input { width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 10px; font-size: 16px; outline: none; transition: border-color 0.3s; }
+        .input-group input:focus { border-color: var(--primary-blue); }
 
-        .onboarding-card h2 {
-            font-family: 'Pacifico', cursive;
-            color: var(--primary-blue);
-            font-size: 32px;
-            margin-bottom: 10px;
-        }
-
-        .onboarding-card p {
-            color: var(--text-color);
-            margin-bottom: 20px;
-            font-size: 16px;
-        }
-
-        .input-group {
-            margin-bottom: 15px;
-            text-align: left;
-        }
-
-        .input-group label {
-            display: block;
-            margin-bottom: 5px;
-            color: var(--text-color);
-            font-weight: 600;
-            font-size: 14px;
-        }
-
-        .input-group input {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            font-size: 16px;
-            outline: none;
-            transition: border-color 0.3s;
-        }
-
-        .input-group input:focus {
-            border-color: var(--primary-blue);
-        }
-
-        .btn-start {
-            background: var(--primary-blue);
-            color: white;
-            border: none;
-            padding: 15px;
-            width: 100%;
-            border-radius: 10px;
-            font-size: 18px;
-            font-weight: bold;
-            cursor: pointer;
-            margin-top: 10px;
-            transition: transform 0.1s;
-        }
-
-        .btn-start:active {
-            transform: scale(0.98);
-        }
+        .btn-start { background: var(--primary-blue); color: white; border: none; padding: 15px; width: 100%; border-radius: 10px; font-size: 18px; font-weight: bold; cursor: pointer; margin-top: 10px; transition: transform 0.1s; }
+        .btn-start:active { transform: scale(0.98); }
 
         /* Header Principal */
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px 20px 10px 20px;
-        }
-
+        .header { display: flex; justify-content: space-between; align-items: center; padding: 20px 20px 10px 20px; }
         .icon-settings { font-size: 28px; color: #fff; text-shadow: 0 2px 4px rgba(0,0,0,0.2); cursor: pointer; transition: transform 0.2s;}
         .icon-settings:active { transform: rotate(45deg); }
-
-        .avatar {
-            width: 45px; height: 45px;
-            background-color: var(--primary-blue); color: white;
-            border-radius: 50%; display: flex; align-items: center; justify-content: center;
-            font-weight: bold; font-size: 18px; box-shadow: 0 4px 6px rgba(0,0,0,0.2);
-            text-transform: uppercase;
-        }
-
-        .app-title {
-            font-family: 'Pacifico', cursive; color: #fff; text-align: center;
-            font-size: 38px; text-shadow: 0px 2px 5px rgba(0,0,0,0.2);
-            margin-bottom: 30px; margin-top: 10px;
-        }
+        .avatar { width: 45px; height: 45px; background-color: var(--primary-blue); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 18px; box-shadow: 0 4px 6px rgba(0,0,0,0.2); text-transform: uppercase; }
+        .app-title { font-family: 'Pacifico', cursive; color: #fff; text-align: center; font-size: 38px; text-shadow: 0px 2px 5px rgba(0,0,0,0.2); margin-bottom: 30px; margin-top: 10px; }
 
         /* Cartões */
         .cards-container { padding: 0 20px; flex-grow: 1; display: flex; flex-direction: column; gap: 15px; }
@@ -172,7 +96,7 @@
         .card.green { background: var(--card-green); }
         .card.blue { background: var(--card-blue); }
 
-        .bottom-card-container { padding: 20px; padding-bottom: 30px; }
+        .bottom-card-container { padding: 20px; padding-bottom: calc(20px + env(safe-area-inset-bottom)); }
         .card-bottom { background: var(--card-orange); border-radius: 25px; padding: 15px; text-align: center; color: white; font-weight: bold; font-size: 18px; box-shadow: 0 4px 8px rgba(0,0,0,0.2); cursor: pointer; border: 2px solid rgba(255, 255, 255, 0.5); }
 
         /* Sub-views Headers */
@@ -191,13 +115,11 @@
         .disclaimer a { color: var(--primary-blue); text-decoration: none; font-weight: bold; }
 
         /* Lista de Itens */
-        .item-list { padding: 10px 20px; display: flex; flex-direction: column; gap: 15px; padding-bottom: 30px; }
+        .item-list { padding: 10px 20px; display: flex; flex-direction: column; gap: 15px; }
         .item-row { display: flex; background: rgba(255, 255, 255, 0.8); border-radius: 12px; padding: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); cursor: pointer; align-items: center; }
         
-        .item-img-thumb { 
-            width: 80px; height: 80px; border-radius: 8px; object-fit: cover; 
-            margin-right: 15px; background: #eee; box-shadow: 0 2px 4px rgba(0,0,0,0.1); 
-        }
+        /* Ajuste do Thumbnail local */
+        .item-img-thumb { width: 80px; height: 80px; border-radius: 8px; object-fit: cover; margin-right: 15px; background: #e0e0e0; box-shadow: 0 2px 4px rgba(0,0,0,0.1); border: 1px solid #eee; display: flex; align-items: center; justify-content: center; font-size: 10px; color: #888; text-align: center;}
         
         .item-info { flex-grow: 1; overflow: hidden; }
         .item-title { font-weight: 700; color: #333; font-size: 15px; margin-bottom: 2px;}
@@ -210,11 +132,13 @@
         .status-requested-byme { color: #f57c00; } 
 
         /* Overlays */
-        .overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255, 255, 255, 0.97); backdrop-filter: blur(8px); z-index: 50; display: none; flex-direction: column; padding: 20px; overflow-y: auto; }
+        .overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255, 255, 255, 0.97); backdrop-filter: blur(8px); z-index: 50; display: none; flex-direction: column; padding: 20px; padding-bottom: calc(20px + env(safe-area-inset-bottom)); overflow-y: auto; }
         .overlay.active { display: flex; }
         .overlay-close { align-self: flex-end; background: none; border: none; font-size: 30px; color: #333; cursor: pointer; margin-bottom: 10px; }
         
-        .overlay-img { width: 100%; height: auto; max-height: 350px; object-fit: cover; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); background:#eee; }
+        /* Ajuste Imagem grande local */
+        .overlay-img { width: 100%; height: auto; max-height: 300px; object-fit: cover; border-radius: 12px; margin-bottom: 20px; background:#e0e0e0; box-shadow: 0 5px 15px rgba(0,0,0,0.1); display: flex; align-items: center; justify-content: center; color: #888;}
+        
         .overlay-title { font-size: 22px; font-weight: 700; margin-bottom: 10px; color: #333; }
         .overlay-desc { font-size: 15px; color: #555; line-height: 1.5; margin-bottom: 15px; }
         .overlay-meta { font-size: 14px; background: #f5f5f5; padding: 15px; border-radius: 8px; margin-bottom: 20px; }
@@ -223,20 +147,19 @@
         .btn-action:disabled { background: #ccc; cursor: not-allowed; }
 
         /* Chat UI */
-        .chat-container { display: flex; flex-direction: column; height: calc(100% - 60px); background: #f9f9f9; }
+        #view-chat { overflow: hidden; padding-bottom: 0; }
+        .chat-container { display: flex; flex-direction: column; height: calc(100% - 70px); background: #f9f9f9; }
         .chat-messages { flex-grow: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; }
         .msg-row { display: flex; align-items: flex-end; gap: 8px; }
         .msg-row.user { justify-content: flex-end; }
         .msg-row.bot { justify-content: flex-start; }
-
         .chat-avatar-badge { width: 30px; height: 30px; border-radius: 50%; background: #ddd; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; color: #555; flex-shrink: 0; }
         .chat-avatar-badge.user { background: var(--primary-blue); color: white; }
-        
         .msg { max-width: 75%; padding: 10px 15px; border-radius: 15px; font-size: 14px; line-height: 1.4; }
         .msg-bot { background: #e0e0e0; color: #333; border-bottom-left-radius: 2px; }
         .msg-user { background: var(--primary-blue); color: white; border-bottom-right-radius: 2px; }
         
-        .chat-input-area { display: flex; padding: 10px; background: white; border-top: 1px solid #ddd; }
+        .chat-input-area { display: flex; padding: 10px; background: white; border-top: 1px solid #ddd; padding-bottom: calc(10px + env(safe-area-inset-bottom)); }
         .chat-input { flex-grow: 1; border: 1px solid #ddd; border-radius: 20px; padding: 10px 15px; outline: none; }
         .chat-send { background: var(--primary-blue); color: white; border: none; border-radius: 50%; width: 40px; height: 40px; margin-left: 10px; cursor: pointer; font-weight: bold;}
         
@@ -254,11 +177,11 @@
             <p>Para personalizar a tua experiência no SOS Mamãs, diz-nos o teu nome.</p>
             <div class="input-group">
                 <label for="input-nome">Nome</label>
-                <input type="text" id="input-nome" placeholder="Ex: Maria" required>
+                <input type="text" id="input-nome" placeholder="Ex: Zé" required>
             </div>
             <div class="input-group">
                 <label for="input-apelido">Apelido</label>
-                <input type="text" id="input-apelido" placeholder="Ex: Silva" required>
+                <input type="text" id="input-apelido" placeholder="Ex: Tobias" required>
             </div>
             <button class="btn-start" onclick="saveUserOnboarding()">Entrar</button>
         </div>
@@ -310,19 +233,17 @@
             <h3>Baby Blues vs. Depressão Pós-Parto</h3>
             <p>É fundamental distinguir as alterações de humor normais, decorrentes das adaptações físicas e emocionais, de um quadro clínico que necessita de intervenção médica.</p>
             <h4>O que é o "Baby Blues"?</h4>
-            <p>Cerca de 50% a 80% das mulheres experienciam o que se designa por "baby blues" (ou melancolia pós-parto) nos primeiros dias após o nascimento do bebé. Esta condição está intimamente ligada às bruscas alterações hormonais que ocorrem após o parto (queda abrupta de estrogénio e progesterona), aliadas à privação de sono e ao cansaço extremo.</p>
+            <p>Cerca de 50% a 80% das mulheres experienciam o que se designa por "baby blues" (ou melancolia pós-parto) nos primeiros dias após o nascimento do bebé.</p>
             <p><strong>Sintomas comuns:</strong></p>
             <ul>
                 <li>Vontade de chorar sem motivo aparente;</li>
                 <li>Alterações rápidas de humor;</li>
                 <li>Ansiedade e irritabilidade;</li>
-                <li>Sensação de vulnerabilidade.</li>
             </ul>
-            <p>Geralmente, o "baby blues" tem início nos primeiros 2 a 3 dias após o parto e <strong>desaparece espontaneamente num prazo de duas semanas</strong>. Requer sobretudo descanso, apoio prático com o bebé e compreensão por parte da família, não necessitando de tratamento médico.</p>
+            <p>Geralmente, o "baby blues" tem início nos primeiros 2 a 3 dias após o parto e <strong>desaparece espontaneamente num prazo de duas semanas</strong>.</p>
             <h3>O que é a Depressão Pós-Parto (DPP)?</h3>
-            <p>Ao contrário do "baby blues", a Depressão Pós-Parto é uma doença grave e prolongada que afeta cerca de 10% a 15% das mulheres. Pode surgir em qualquer momento durante o primeiro ano de vida do bebé, sendo mais comum o seu aparecimento nas primeiras semanas ou meses após o parto.</p>
+            <p>Ao contrário do "baby blues", a Depressão Pós-Parto é uma doença grave e prolongada que afeta cerca de 10% a 15% das mulheres.</p>
             <h4>Principais Sintomas da DPP</h4>
-            <p>Os sinais são mais intensos e incapacitantes, interferindo com a capacidade da mãe de cuidar de si própria e do recém-nascido. Incluem:</p>
             <ul>
                 <li>Tristeza profunda, choro persistente e sensação de vazio;</li>
                 <li>Fadiga extrema que não alivia com o sono;</li>
@@ -330,8 +251,6 @@
                 <li>Ansiedade severa ou ataques de pânico;</li>
                 <li>Sentimentos esmagadores de culpa, vergonha ou de "ser uma má mãe";</li>
                 <li>Insónias severas ou hipersónia;</li>
-                <li>Alterações no apetite;</li>
-                <li>Dificuldade de concentração e tomada de decisões;</li>
                 <li>Em casos mais graves, pensamentos de fazer mal a si própria ou ao bebé.</li>
             </ul>
         </div>
@@ -380,7 +299,7 @@
             <div id="chat-disclaimer" class="disclaimer" style="margin: 10px; text-align:center;"></div>
             <div id="chat-messages" class="chat-messages"></div>
             <div class="chat-input-area">
-                <input type="text" id="chat-input-field" class="chat-input" placeholder="Escreva a sua mensagem...">
+                <input type="text" id="chat-input-field" class="chat-input" placeholder="Escreva a mensagem...">
                 <button class="chat-send" onclick="sendMessage()">➤</button>
             </div>
         </div>
@@ -406,7 +325,7 @@
 
     <div id="overlay-item" class="overlay">
         <button class="overlay-close" onclick="closeOverlay()">×</button>
-        <img id="overlay-img" class="overlay-img" src="" alt="Item" onerror="this.onerror=null;this.src='https://placehold.co/600x400/e6f7ff/1e88e5?text=Artigo+Beb%C3%A9&font=Nunito';">
+        <img id="overlay-img" class="overlay-img" src="" alt="Imagem do Artigo" onerror="this.onerror=null; this.src='data:image/svg+xml;charset=UTF-8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22600%22 height=%22400%22 viewBox=%220 0 600 400%22%3E%3Crect width=%22100%25%22 height=%22100%25%22 fill=%22%23e0e0e0%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22 font-family=%22sans-serif%22 font-size=%2220%22 fill=%22%23888%22%3EImagem em falta na pasta img/%3C/text%3E%3C/svg%3E';">
         <h2 id="overlay-title" class="overlay-title"></h2>
         <p id="overlay-desc" class="overlay-desc"></p>
         <div class="overlay-meta">
@@ -422,18 +341,18 @@
     let currentChatContext = '';
     let currentUserInitials = '';
 
-    // Links ultra-estáveis da Wikimedia Commons. Se falharem, o atributo 'onerror' no HTML renderiza um fallback perfeito.
+    // A base de dados agora aponta para a pasta local 'img/'
     let itemsDB = [
-        { id: 1, name: 'Espreguiçadeira Musical', desc: 'Espreguiçadeira com várias músicas e vibração. Inclui as pilhas. Usado apenas 2 meses.', owner: 'Maria S***', available: true, requestedByMe: false, img: 'https://commons.wikimedia.org/wiki/Special:FilePath/BabyBj%C3%B6rn_baby_carrier_and_baby_bouncer.jpg?width=600' },
-        { id: 2, name: 'Berço Next2Me Chicco', desc: 'Berço co-sleeping ajustável em altura. Inclui colchão lavado e dois lençóis.', owner: 'Ana P***', available: true, requestedByMe: false, img: 'https://commons.wikimedia.org/wiki/Special:FilePath/Baby_Crib_(49935766018).jpg?width=600' },
-        { id: 3, name: 'Bomba Tira Leite', desc: 'Bomba elétrica dupla, higienizada e esterilizada. Acompanha frascos extra.', owner: 'Joana R***', available: false, requestedByMe: false, img: 'https://commons.wikimedia.org/wiki/Special:FilePath/Breast_pump.jpg?width=600' },
-        { id: 4, name: 'Trocador Portátil', desc: 'Trocador acolchoado com bolsos integrados para fraldas e toalhitas.', owner: 'Sofia M***', available: true, requestedByMe: false, img: 'https://commons.wikimedia.org/wiki/Special:FilePath/Baby_bed_14_Henrietta_Street.jpg?width=600' },
-        { id: 5, name: 'Ninho Redutor para Bebé', desc: 'Ninho 100% algodão orgânico, capa removível e lavável na máquina.', owner: 'Catarina F***', available: true, requestedByMe: false, img: 'https://commons.wikimedia.org/wiki/Special:FilePath/Baby_boy\'s_sleeping_room_(Unsplash).jpg?width=600' },
-        { id: 6, name: 'Carrinho de Bebé Trio', desc: 'Carrinho completo com alcofa, ovo e cadeira de passeio. Tecidos perfeitos.', owner: 'Beatriz L***', available: true, requestedByMe: false, img: 'https://commons.wikimedia.org/wiki/Special:FilePath/Baby_stroller_(50941798266).jpg?width=600' },
-        { id: 7, name: 'Banheira com Suporte', desc: 'Banheira ergonómica com suporte dobrável e tubo de escoamento.', owner: 'Inês C***', available: true, requestedByMe: false, img: 'https://commons.wikimedia.org/wiki/Special:FilePath/Baby_bathing_tub_01.jpg?width=600' },
-        { id: 8, name: 'Marsúpio Ergobaby', desc: 'Marsúpio ergonómico que suporta várias posições. Cor cinza escuro.', owner: 'Marta V***', available: true, requestedByMe: false, img: 'https://commons.wikimedia.org/wiki/Special:FilePath/Sioux_baby_carrier.jpg?width=600' },
-        { id: 9, name: 'Esterilizador de Biberões', desc: 'Esterilizador a vapor para o microondas. Demora apenas 3 minutos.', owner: 'Rita G***', available: false, requestedByMe: false, img: 'https://commons.wikimedia.org/wiki/Special:FilePath/Bottle_steriliser.jpg?width=600' },
-        { id: 10, name: 'Ginásio de Atividades', desc: 'Tapete acolchoado de atividades com arcos, espelho e 4 brinquedos.', owner: 'Helena D***', available: true, requestedByMe: false, img: 'https://commons.wikimedia.org/wiki/Special:FilePath/Play_mat.jpg?width=600' }
+        { id: 1, name: 'Espreguiçadeira Musical', desc: 'Espreguiçadeira com várias músicas e vibração. Inclui as pilhas. Usado apenas 2 meses.', owner: 'Maria S***', available: true, requestedByMe: false, img: 'img/espreguicadeira.jpg' },
+        { id: 2, name: 'Berço Next2Me Chicco', desc: 'Berço co-sleeping ajustável em altura. Inclui colchão lavado e dois lençóis.', owner: 'Ana P***', available: true, requestedByMe: false, img: 'img/next2me.jpg' },
+        { id: 3, name: 'Bomba Tira Leite', desc: 'Bomba elétrica dupla, higienizada e esterilizada. Acompanha frascos extra.', owner: 'Joana R***', available: false, requestedByMe: false, img: 'img/bomba.jpg' },
+        { id: 4, name: 'Trocador Portátil', desc: 'Trocador acolchoado com bolsos integrados para fraldas e toalhitas.', owner: 'Sofia M***', available: true, requestedByMe: false, img: 'img/trocador.jpg' },
+        { id: 5, name: 'Ninho Redutor para Bebé', desc: 'Ninho 100% algodão orgânico, capa removível e lavável na máquina.', owner: 'Catarina F***', available: true, requestedByMe: false, img: 'img/ninho.jpg' },
+        { id: 6, name: 'Carrinho de Bebé Trio', desc: 'Carrinho completo com alcofa, ovo e cadeira de passeio. Tecidos perfeitos.', owner: 'Beatriz L***', available: true, requestedByMe: false, img: 'img/carrinho.jpg' },
+        { id: 7, name: 'Banheira com Suporte', desc: 'Banheira ergonómica com suporte dobrável e tubo de escoamento.', owner: 'Inês C***', available: true, requestedByMe: false, img: 'img/banheira.jpg' },
+        { id: 8, name: 'Marsúpio Ergobaby', desc: 'Marsúpio ergonómico que suporta várias posições. Cor cinza escuro.', owner: 'Marta V***', available: true, requestedByMe: false, img: 'img/marsupio.jpg' },
+        { id: 9, name: 'Esterilizador de Biberões', desc: 'Esterilizador a vapor para o microondas. Demora apenas 3 minutos.', owner: 'Rita G***', available: false, requestedByMe: false, img: 'img/esterilizador.jpg' },
+        { id: 10, name: 'Ginásio de Atividades', desc: 'Tapete acolchoado de atividades com arcos, espelho e 4 brinquedos.', owner: 'Helena D***', available: true, requestedByMe: false, img: 'img/ginasio.jpg' }
     ];
 
     const respostasProfissionais = [
@@ -522,9 +441,8 @@
             row.className = 'item-row';
             row.onclick = () => openItemDetails(item.id);
 
-            // A segurança do fallback adicionada no onerror da imagem thumbnail também!
             row.innerHTML = `
-                <img src="${item.img}" class="item-img-thumb" alt="${item.name}" onerror="this.onerror=null;this.src='https://placehold.co/150x150/e6f7ff/1e88e5?text=Item';">
+                <img src="${item.img}" class="item-img-thumb" alt="${item.name}" onerror="this.onerror=null; this.src='data:image/svg+xml;charset=UTF-8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2280%22 height=%2280%22 viewBox=%220 0 80 80%22%3E%3Crect width=%22100%25%22 height=%22100%25%22 fill=%22%23e0e0e0%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22 font-family=%22sans-serif%22 font-size=%2210%22 fill=%22%23888%22%3ESem Img%3C/text%3E%3C/svg%3E';">
                 <div class="item-info">
                     <div class="item-title">${item.name}</div>
                     <div class="item-desc">${item.desc}</div>
@@ -541,11 +459,11 @@
         const item = itemsDB.find(i => i.id === id);
         if(!item) return;
         
-        // Atribuir imagem e também reiniciar o onerror no caso do browser ser estrito
         const imgEl = document.getElementById('overlay-img');
+        // Fallback dinâmico caso a imagem não exista na pasta img/
         imgEl.onerror = function() {
             this.onerror = null;
-            this.src = 'https://placehold.co/600x400/e6f7ff/1e88e5?text=Artigo+Beb%C3%A9&font=Nunito';
+            this.src = 'data:image/svg+xml;charset=UTF-8,%3Csvg xmlns="http://www.w3.org/2000/svg" width="600" height="400" viewBox="0 0 600 400"%3E%3Crect width="100%25" height="100%25" fill="%23e0e0e0"/%3E%3Ctext x="50%25" y="50%25" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="20" fill="%23888"%3EImagem em falta na pasta img/%3C/text%3E%3C/svg%3E';
         };
         imgEl.src = item.img;
         
